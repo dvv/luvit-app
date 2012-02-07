@@ -1,0 +1,28 @@
+<!--script src="static/engine.io.js"></script-->
+<script src="static/sockjs.js"></script>
+<section id="workspace">
+<ul class="tabs" data-tabs="tabs">
+  <li class="active"><a href="#">Home</a></li>
+  <li><a href="#">Profile</a></li>
+  <li><a href="#">Messages</a></li>
+  <li><a href="#">Settings</a></li>
+  <li><a href="#">Contact</a></li>
+</ul>
+</section>
+
+{#DEF('item')}
+123{foo}456
+{/DEF}
+
+<p id="hello">Hello, {{name or uid or "Sunny World"}}!</p>
+{#IF(uid)}
+<ul>
+<li>{uid}</li>
+{#LOOP(array)}
+<li>{a}{foo}</li>
+<li>{USE('item')}</li>
+{/LOOP}
+</ul>
+{/IF}
+
+{PARTIAL('foo')}
