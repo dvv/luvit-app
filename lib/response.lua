@@ -5,7 +5,7 @@ Response.auto_server = 'U-Gotta-Luvit'
 
 function Response:send(code, data, headers, close)
   --debug('REQ', self.req.url, code)
-  if code == 500 then p('ERR', data) end
+  --if code == 500 then p('ERR', data) end
   self:writeHead(code, headers or { })
   if data then self:write(data) end
   if close or close == nil then self:finish() end
