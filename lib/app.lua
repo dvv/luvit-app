@@ -157,7 +157,7 @@ function Application:run(port, host)
   -- compose request handler
   local handler = Stack.stack(unpack(stack))
   -- start HTTP server
-  self.server = HTTP.createServer(host, port, function (req, res)
+  self.server = HTTP.createServer(function (req, res)
     -- bootstrap response
     res.req = req
     res.app = self
@@ -166,7 +166,7 @@ function Application:run(port, host)
     req.uri.query = parse_query(req.uri.query)
     --Log.debug('REQ', req)
     handler(req, res)
-  end)
+  end):listen(port, host)
   Log.info('Server listening at http://%s:%d/. Press CTRL+C to stop...', host, port)
   return self
 end
