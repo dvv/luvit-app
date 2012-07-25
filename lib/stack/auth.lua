@@ -3,7 +3,7 @@
 --
 
 local Curl = require('curl')
-local Crypto = require('crypto')
+local Crypto = require('_crypto')
 
 --
 -- openid brokers
@@ -20,7 +20,7 @@ local openid_brokers = {
       if not data or not data.identity then
         return nil
       end
-      local uid = Crypto.sha1(data.identity)
+      local uid = Crypto.digest.new('sha1'):final(data.identity)
       -- twitter
       if data.provider == 'http://twitter.com/' then
         data = {

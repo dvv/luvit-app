@@ -42,7 +42,7 @@ app:set('render', {
 
 app:mount('/static/', 'static', {
   mount = '',
-  directory = __dirname .. '/static',
+  root = __dirname .. '/static',
 })
 
 app:set('render', {

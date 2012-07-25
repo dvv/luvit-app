@@ -10,8 +10,25 @@
 --
 
 local OS = require('os')
-local Crypto = require('crypto')
+local Crypto = require('_crypto')
 local JSON = require('json')
+
+local function sign(secret, data)
+  return Crypto.digest.new('sha1'):update(secret):final(data)
+end
+
+local function encrypt(secret, data)
+  local cipher = Crypto.encrypt.new('aes192', secret)
+  local result = cipher:final(data)
+  --result = tohex(result)
+  return result
+end
+
+local function uncrypt(secret, data)
+  local cipher = Crypto.decrypt.new('aes192', secret)
+  --data = fromhex(data)
+  return cipher:final(data)
+end
 
 local function expires_in(ttl)
   return OS.date('%c', OS.time() + ttl)
@@ -19,9 +36,9 @@ end
 
 local function serialize(secret, obj)
   local str = JSON.stringify(obj)
-  local str_enc = Crypto.encrypt(secret, str)
+  local str_enc = encrypt(secret, str)
   local timestamp = OS.time()
-  local hmac_sig = Crypto.sign(secret, timestamp .. str_enc)
+  local hmac_sig = sign(secret, timestamp .. str_enc)
   local result = hmac_sig .. timestamp .. str_enc
   return result
 end
@@ -30,11 +47,11 @@ local function deserialize(secret, ttl, str)
   local hmac_signature = str:sub(1, 40)
   local timestamp = tonumber(str:sub(41, 50), 10)
   local data = str:sub(51)
-  local hmac_sig = Crypto.sign(secret, timestamp .. data)
+  local hmac_sig = sign(secret, timestamp .. data)
   if hmac_signature ~= hmac_sig or timestamp + ttl <= OS.time() then
     return nil
   end
-  data = Crypto.uncrypt(secret, data)
+  data = uncrypt(secret, data)
   data = JSON.parse(data)
   if data == JSON.null then data = nil end
   return data
