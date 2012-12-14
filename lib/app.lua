@@ -92,10 +92,9 @@ function Application:mount(path, handler, ...)
   local plen = #path
   Table.insert(self.stack, function (req, res, nxt)
     if req.uri.pathname:sub(1, plen) == path then
-      -- FIXME: this eats pathname forever
-      -- if in layer we call nxt(), that handler receives cut pathname
-      req.uri.pathname = req.uri.pathname:sub(plen + 1)
-      layer(req, res, nxt)
+      local old_pathname = req.uri.pathname
+      req.uri.pathname   = req.uri.pathname:sub(plen + 1)
+      layer(req, res, function() req.uri.pathname = old_pathname nxt() end)
     else
       nxt()
     end
