@@ -16,7 +16,7 @@ local Log = require('./log')
 require('./request')
 require('./response')
 --
-require('./render')
+--require('./render')
 
 -- Application is EventEmitter
 local Application = Emitter:extend()

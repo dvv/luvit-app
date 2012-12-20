@@ -8,18 +8,15 @@ local Renderer = require('kernel')
 -- rendering options live in `options`
 --
 
--- TODO: get rid of
-options = { }
-
 local function render(name, data, callback)
   -- get absolute path of partial
   local filename = name
   if name:sub(1, 1) ~= '/' then
-    if options.prefix then
-      filename = Path.resolve(options.prefix, filename)
+    if Renderer.options.prefix then
+      filename = Path.resolve(Renderer.options.prefix, filename)
     end
-    if options.suffix then
-      filename = filename .. options.suffix
+    if Renderer.options.suffix then
+      filename = filename .. Renderer.options.suffix
     end
   end
   -- compile template
@@ -145,6 +142,8 @@ Renderer.helpers.USE = function (name, locals, callback)
   _defs[name](locals, callback)
 end
 
+
+
 --
 -- give Response the render method
 --
@@ -152,7 +151,7 @@ local Response = require('http').Response
 function Response:render(filename, data)
   if not data then data = { } end
   -- TODO: this is way bad to use global stuff!
-  options = self.app.options.render or { }
+  --options = self.app.options.render or { }
   -- TODO: enclose in render('layout')
   render('layout', data, function (err, layout)
     if err then
@@ -170,4 +169,10 @@ function Response:render(filename, data)
       })
     end)
   end)
+end
+
+-- middleware
+return function (options)  
+  Renderer.options = options or {}
+  return function(rq, rs, nxt) nxt() end
 end
