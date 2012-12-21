@@ -34,20 +34,15 @@ local function authorize(session, callback)
   end
 end
 
--- tune options
-app:set('render', {
-  prefix = __dirname .. '/views',
-  suffix = '.html',
-})
-
 app:mount('/static/', 'static', {
   mount = '',
   root = __dirname .. '/static',
 })
 
-app:set('render', {
+-- render middleware
+app:use('render', {
   prefix = __dirname .. '/views',
-  suffix = '.html',
+  suffix = '.html'
 })
 
 -- handle cookie session and request context
